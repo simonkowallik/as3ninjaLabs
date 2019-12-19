@@ -1,0 +1,59 @@
+declaration:
+  schemaVersion: 3.11.0
+  label: "AS3 Ninja built AS3 Declaration"
+  remark: "Lab 2"
+
+# the list of applications
+apps:
+  # first app: Jumphost WebUI
+  - name: WebJumphost
+    type: https
+    address:
+    - 198.18.0.10
+    tls:
+      ciphers: DEFAULT:!TLS_v1:!TLS_v1_1
+      certificate:
+        path: /secretv2/admin/jumphost/x509
+      # HINT Task 1: probably a good idea to fetch the `privateKey` from Vault too!
+      privateKey: |
+        -----BEGIN PRIVATE KEY-----
+        MIIDlwIBADANBgkqhkiG9w0BAQEFAASCA4EwggN9AgEAAoHBAK4n2DtK8I1WN46I
+        SEqT6jHCcR3366WD5/UbNkLeAe8C7HOAH3HcwhjJ0FcCTRFmuSBTN2NdjtCW7JW7
+        fR7CuKhqxLJyqqJr0Vq1xMg68SbEmWLE6ldWRSLpmrtMPvtyEaADcPJgXw4aTkeA
+        BS3Hq0Is5OPIZ8WViBugcdDSvo/AWfXL0Z879YB5uC4G0iTu1obX5+7xMPKJv8mI
+        zBwjiDHtJMKEeNTkCPUOFmVLU7suVXiog5KXkfM6g2L/xrk6jwIDAQABAoHBAIfu
+        n67/+ixHPEvrAYn8U9KM8x+yD+L7xwQgPkUI5bd5r7cjLOgBqBoTA6O2LxNC+4JI
+        kbXkI4GaG4VvduSYlesWkvq514e44gqMT9D9eJaK4zIdgs+yjXoHnfdNNueqCt/E
+        UymGQxim4g2jZ0KKxFUf4/1+zEtSG0QZDmNuu1TBTsNzlr5HMquk2pLAoCgHn/VJ
+        T1vSkMnvL1wFmAmg9GRtyn01YokFQEeULNekEB0fAMX+EgINxUCkkgsfsn4uYQJh
+        AN0T0QioJyx3sZgPy0j0VqV46bGf/A6mFOWOSQBCsbVhHcLXQtmEtxxUV9JJ3G9f
+        Z8s3du3sEMc2HOYOk6qtT2r6eMkP1sn2f3XIRY5RQiMOGCwOiTYr5M6VNfrU9Jlb
+        XwJhAMmqjTYoW63/drkMx8Y8v3c7h7P2jliFjMYOdq8JTDVv+lmMiUcnqDvxBGp5
+        xMGJkTXDMzoDQYHhnDJHrcURjyyuLy9Up6fjVhNoC4tobmdM754xMRh7/qp5dWzX
+        xX+e0QJhAJoMq/UvTxTCVwMRxmKQuCvX5Gf8hiQjAJ6xFhdTYgd0o8tYOmHeA8Z+
+        0y9afnsw7N+DR6EkhNB72YlJkQY2fAecfzwDiHT1Cf4lzqoL310T/i389wnDbk2x
+        VYryh3qxWwJgBTG3YWW4tsqVrD6ABsMZy2BlJmV7VRxbe95zgB6lL9sqf5P3FTYY
+        RzL2AigQwUthyhi1ARGEZmwBMepWt3S0U1pJLNbpWpGobeeIJJcUAOUiZtitgwvu
+        i0WFmMAV/iuBAmATrx8fTkYbLweXjyM11wDhFmaRfHQxK9wIA2uXPvbriaGC6zoh
+        B4UQCSl04n8jfYmDN0jyTPFlxA+aAwJV8Tv5AFKEW9o1HO6eJjn5Hn/nFbUmy1SN
+        3VmETpIo3jcA0Lw=
+        -----END PRIVATE KEY-----
+      bridging: true
+    backend:
+    - servicePort: 443
+      serverAddresses:
+      - 192.168.100.1
+  # second app: Jumphost SSH service
+  - name: SSHJumphost
+    type: tcp
+    port: 22
+    address:
+    - 198.18.0.10
+    monitors:
+      - bigip: /Common/tcp_half_open
+    backend:
+    - servicePort: 22
+      serverAddresses:
+      - 192.168.100.1
+
+# mappings now live in: mappings.yaml
