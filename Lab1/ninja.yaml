@@ -9,7 +9,7 @@ apps:
   - name: WebJumphost
     type: https
     address:
-    - 198.18.0.10
+    - 198.18.0.100
     tls:
       ciphers: DEFAULT:!TLS_v1:!TLS_v1_1
       certificate: |
@@ -57,7 +57,7 @@ apps:
     type: tcp
     port: 22
     address:
-    - 198.18.0.10
+    - 198.18.0.100
     monitors:
       - bigip: /Common/tcp_half_open
     # backend is a list of Pool_Member objects, see: https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/refguide/schema-reference.html#pool-member
@@ -65,13 +65,22 @@ apps:
     - servicePort: 22
       serverAddresses:
       - 192.168.100.1
-
+  - name: RDPJumphost-Bluekeep
+    type: tcp
+    port: 3389
+    address:
+    - 198.18.0.100
+    backend:
+    - servicePort: 3389
+      serverAddresses:
+      - 192.168.100.1
+ 
 # a mapping object to simplify some selection mechanisms in the
 # declaration template as well as define defaults for app types
 mappings:
   service:
-    http: Service_HTTP
     https: Service_HTTPS
+    http: Service_HTTP
     tcp: Service_TCP
   monitor:
     http:
