@@ -65,7 +65,7 @@ apps:
     - servicePort: 22
       serverAddresses:
       - 192.168.100.1
-  - name: RDPJumphost-Bluekeep
+  - name: RDPJumphostBluekeep
     type: tcp
     port: 3389
     address:
