@@ -1,3 +1,6 @@
+as3ninja:
+  declaration_template: Lab3/template.jinja2
+
 declaration:
   schemaVersion: 3.11.0
   label: "AS3 Ninja built AS3 Declaration"
