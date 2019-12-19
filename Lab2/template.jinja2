@@ -23,14 +23,8 @@
         {% if app.tls is defined %}
         "ckc_{{ app.name }}": {
           "class": "Certificate",
-          {# retrieve certificate from local vault instance, certificate is at data->certificate
-           # see: https://as3ninja.readthedocs.io/en/latest/vault.html#example-using-secrets-engine-kv2
-           #}
           "certificate": {{ (app.tls.certificate | vault)['data']['data']['certificate'] | jsonify }},
-          {#
-           # HINT Task 1: we probably want to retrieve the 'privateKey' from vault too!
-           #}
-          "privateKey": {{ app.tls.privateKey | jsonify }}
+          "privateKey": {{ (app.tls.privateKey | vault)['data']['data']['privateKey'] | jsonify }}
         },
         "servertls_{{ app.name }}": {
           "class": "TLS_Server",
