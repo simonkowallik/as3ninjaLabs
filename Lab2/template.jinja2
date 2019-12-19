@@ -52,12 +52,12 @@
              # however this introduces some redundancy and forces a specific format
              # in the Template Configuration
              #}
-            "members": {{ app.backend | jsonify }}
+            "members": {{ ninja.backends[app.name] | jsonify }}
         },
         "vs_{{ app.name }}": {
           {# service class is set via mappings from config based on type of app #}
           "class": "{{ ninja.mappings.service[app.type] }}",
-          "virtualAddresses": {{ app.address | jsonify }},
+          "virtualAddresses": {{ ninja.ipam[app.name] | jsonify }},
           {# if app has tls configuration apply previous definitions #}
           {% if app.tls is defined %}
           "serverTLS": "servertls_{{ app.name }}",
