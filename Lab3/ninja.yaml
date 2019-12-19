@@ -1,0 +1,26 @@
+declaration:
+  schemaVersion: 3.11.0
+  label: "AS3 Ninja built AS3 Declaration"
+  remark: "Lab 2"
+
+# the list of applications
+apps:
+  # first app: Jumphost WebUI
+  - name: WebJumphost
+    type: https
+    port: 443
+    tls:
+      ciphers: DEFAULT:!TLS_v1:!TLS_v1_1
+      certificate:
+        path: /secretv2/admin/jumphost/x509
+      privateKey:
+        path: /secretv2/admin/jumphost/x509
+      bridging: true
+  # second app: Jumphost SSH service
+  - name: SSHJumphost
+    type: tcp
+    port: 22
+    monitors:
+      - bigip: /Common/tcp_half_open
+
+# mappings now live in: mappings.yaml

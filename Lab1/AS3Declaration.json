@@ -1,0 +1,86 @@
+{
+  "class": "AS3",
+  "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json",
+  "declaration": {
+    "class": "ADC",
+    "schemaVersion": "3.11.0",
+    "label": "AS3 Ninja built AS3 Declaration",
+    "remark": "Lab 1",
+    "id": "urn:uuid:093e8805-2c61-4df1-80c9-9499e714cdcf",
+    "MyTenant": {
+      "class": "Tenant",
+      "WebJumphost": {
+        "class": "Application",
+        "template": "generic",
+        "ckc_WebJumphost": {
+          "class": "Certificate",
+          "certificate": "-----BEGIN CERTIFICATE-----\nMIIDFzCCAkCgAwIBAgIJAP4DbupXe8TnMA0GCSqGSIb3DQEBCwUAMFsxCzAJBgNV\nBAYTAkRFMRYwFAYDVQQKDA1FeGFtcGxlIENvcnAuMRUwEwYDVQQLDAxJbmZvU2Vj\nIEd1eXMxHTAbBgNVBAMMFGp1bXBob3N0LmV4YW1wbGUuY29tMB4XDTE5MTIxNzA2\nMjcyMFoXDTE5MTIyNzA2MjcyMFowWzELMAkGA1UEBhMCREUxFjAUBgNVBAoMDUV4\nYW1wbGUgQ29ycC4xFTATBgNVBAsMDEluZm9TZWMgR3V5czEdMBsGA1UEAwwUanVt\ncGhvc3QuZXhhbXBsZS5jb20wgd8wDQYJKoZIhvcNAQEBBQADgc0AMIHJAoHBAK4n\n2DtK8I1WN46ISEqT6jHCcR3366WD5/UbNkLeAe8C7HOAH3HcwhjJ0FcCTRFmuSBT\nN2NdjtCW7JW7fR7CuKhqxLJyqqJr0Vq1xMg68SbEmWLE6ldWRSLpmrtMPvtyEaAD\ncPJgXw4aTkeABS3Hq0Is5OPIZ8WViBugcdDSvo/AWfXL0Z879YB5uC4G0iTu1obX\n5+7xMPKJv8mIzBwjiDHtJMKEeNTkCPUOFmVLU7suVXiog5KXkfM6g2L/xrk6jwID\nAQABo2MwYTAMBgNVHRMBAf8EAjAAMA4GA1UdDwEB/wQEAwIFoDAfBgNVHREEGDAW\nghRqdW1waG9zdC5leGFtcGxlLmNvbTAgBgNVHSUBAf8EFjAUBggrBgEFBQcDAQYI\nKwYBBQUHAwIwDQYJKoZIhvcNAQELBQADgcEAnGekFJyNZbBbOzYFESmY39TmyjpT\n2ahaziunYTekjCKAqk3MXdtKU2K1J9YfaK9U2dzjH57z/q14WbOX4Qg1jtsYaBas\ns2rRAFge3SFjmDulddRDgHoTpz/N+nEOaiyQoKF+59rOs/uBV0NGSU1FGuVejWog\nqIywVb73r/IP3pUN4bqgmxsmcEIGB1YZv37Ek1k0EugbwzInygKqsi7bzTV9Cn+v\np/Qrit4S28E3RUetkY3xEW1rXoFF+e3zKLVe\n-----END CERTIFICATE-----\n",
+          "privateKey": "-----BEGIN PRIVATE KEY-----\nMIIDlwIBADANBgkqhkiG9w0BAQEFAASCA4EwggN9AgEAAoHBAK4n2DtK8I1WN46I\nSEqT6jHCcR3366WD5/UbNkLeAe8C7HOAH3HcwhjJ0FcCTRFmuSBTN2NdjtCW7JW7\nfR7CuKhqxLJyqqJr0Vq1xMg68SbEmWLE6ldWRSLpmrtMPvtyEaADcPJgXw4aTkeA\nBS3Hq0Is5OPIZ8WViBugcdDSvo/AWfXL0Z879YB5uC4G0iTu1obX5+7xMPKJv8mI\nzBwjiDHtJMKEeNTkCPUOFmVLU7suVXiog5KXkfM6g2L/xrk6jwIDAQABAoHBAIfu\nn67/+ixHPEvrAYn8U9KM8x+yD+L7xwQgPkUI5bd5r7cjLOgBqBoTA6O2LxNC+4JI\nkbXkI4GaG4VvduSYlesWkvq514e44gqMT9D9eJaK4zIdgs+yjXoHnfdNNueqCt/E\nUymGQxim4g2jZ0KKxFUf4/1+zEtSG0QZDmNuu1TBTsNzlr5HMquk2pLAoCgHn/VJ\nT1vSkMnvL1wFmAmg9GRtyn01YokFQEeULNekEB0fAMX+EgINxUCkkgsfsn4uYQJh\nAN0T0QioJyx3sZgPy0j0VqV46bGf/A6mFOWOSQBCsbVhHcLXQtmEtxxUV9JJ3G9f\nZ8s3du3sEMc2HOYOk6qtT2r6eMkP1sn2f3XIRY5RQiMOGCwOiTYr5M6VNfrU9Jlb\nXwJhAMmqjTYoW63/drkMx8Y8v3c7h7P2jliFjMYOdq8JTDVv+lmMiUcnqDvxBGp5\nxMGJkTXDMzoDQYHhnDJHrcURjyyuLy9Up6fjVhNoC4tobmdM754xMRh7/qp5dWzX\nxX+e0QJhAJoMq/UvTxTCVwMRxmKQuCvX5Gf8hiQjAJ6xFhdTYgd0o8tYOmHeA8Z+\n0y9afnsw7N+DR6EkhNB72YlJkQY2fAecfzwDiHT1Cf4lzqoL310T/i389wnDbk2x\nVYryh3qxWwJgBTG3YWW4tsqVrD6ABsMZy2BlJmV7VRxbe95zgB6lL9sqf5P3FTYY\nRzL2AigQwUthyhi1ARGEZmwBMepWt3S0U1pJLNbpWpGobeeIJJcUAOUiZtitgwvu\ni0WFmMAV/iuBAmATrx8fTkYbLweXjyM11wDhFmaRfHQxK9wIA2uXPvbriaGC6zoh\nB4UQCSl04n8jfYmDN0jyTPFlxA+aAwJV8Tv5AFKEW9o1HO6eJjn5Hn/nFbUmy1SN\n3VmETpIo3jcA0Lw=\n-----END PRIVATE KEY-----\n"
+        },
+        "servertls_WebJumphost": {
+          "class": "TLS_Server",
+          "ciphers": "DEFAULT",
+          "certificates": [
+            {
+              "certificate": "ckc_WebJumphost"
+            }
+          ]
+        },
+        "backends": {
+          "class": "Pool",
+          "monitors": [
+            "https"
+          ],
+          "members": [
+            {
+              "servicePort": 443,
+              "serverAddresses": [
+                "192.168.100.1"
+              ]
+            }
+          ]
+        },
+        "vs_WebJumphost": {
+          "class": "Service_HTTPS",
+          "virtualAddresses": [
+            "198.18.0.10"
+          ],
+          "serverTLS": "servertls_WebJumphost",
+          "clientTLS": {
+            "bigip": "/Common/serverssl"
+          },
+          "pool": "backends"
+        }
+      },
+      "SSHJumphost": {
+        "class": "Application",
+        "template": "generic",
+        "backends": {
+          "class": "Pool",
+          "monitors": [
+            "tcp",
+            {
+              "bigip": "/Common/monitor_ssh"
+            }
+          ],
+          "members": [
+            {
+              "servicePort": 22,
+              "serverAddresses": [
+                "192.168.100.1"
+              ]
+            }
+          ]
+        },
+        "vs_SSHJumphost": {
+          "class": "Service_TCP",
+          "virtualAddresses": [
+            "198.18.0.10"
+          ],
+          "virtualPort": 22,
+          "pool": "backends"
+        }
+      }
+    }
+  }
+}
