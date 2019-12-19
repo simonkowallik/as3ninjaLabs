@@ -1,18 +1,14 @@
 ipam:
   WebJumphost:
-    address:
       - 198.18.0.10
   SSHJumphost:
-    address:
       - 198.18.0.10
 backends:
   WebJumphost:
-    backend:
     - servicePort: 443
       serverAddresses:
       - 192.168.100.1
   SSHJumphost:
-    backend:
     - servicePort: 22
       serverAddresses:
       - 192.168.100.1
