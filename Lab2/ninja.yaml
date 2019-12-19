@@ -8,8 +8,6 @@ apps:
   # first app: Jumphost WebUI
   - name: WebJumphost
     type: https
-    address:
-    - 198.18.0.10
     tls:
       ciphers: DEFAULT:!TLS_v1:!TLS_v1_1
       certificate:
@@ -17,21 +15,11 @@ apps:
       privateKey:
         path: /secretv2/admin/jumphost/x509
       bridging: true
-    backend:
-    - servicePort: 443
-      serverAddresses:
-      - 192.168.100.1
   # second app: Jumphost SSH service
   - name: SSHJumphost
     type: tcp
     port: 22
-    address:
-    - 198.18.0.10
     monitors:
       - bigip: /Common/tcp_half_open
-    backend:
-    - servicePort: 22
-      serverAddresses:
-      - 192.168.100.1
 
 # mappings now live in: mappings.yaml
