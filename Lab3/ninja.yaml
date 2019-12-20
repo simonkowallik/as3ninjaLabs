@@ -8,7 +8,7 @@ apps:
   # first app: Jumphost WebUI
   - name: WebJumphost
     type: https
-    port: 443
+    port: 100000
     tls:
       ciphers: DEFAULT:!TLS_v1:!TLS_v1_1
       certificate:
