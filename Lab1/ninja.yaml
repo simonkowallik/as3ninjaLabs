@@ -9,7 +9,7 @@ apps:
   - name: WebJumphost
     type: https
     address:
-    - 198.18.0.10
+    - 198.18.0.11
     tls:
       ciphers: DEFAULT:!TLS_v1:!TLS_v1_1
       certificate: |
