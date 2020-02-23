@@ -10,6 +10,10 @@ There are many other CI systems out there, choose one which suits you best / is 
 You can find the CI Pipeline configuration in [`.circleci/config.yml`](.circleci/config.yml)
 and the results at [https://circleci.com/gh/simonkowallik/as3ninjaLabs](https://circleci.com/gh/simonkowallik/as3ninjaLabs).
 
+[![AS3 Ninja Labs CI/CD Pipeline](https://github.com/simonkowallik/as3ninjaLabs/raw/master/cicd/_static/cicd_pipeline.png)](https://circleci.com/gh/simonkowallik/as3ninjaLabs)
+
+
+
 ## Tools
 
 The CI Pipeline uses various tools beyond the scripts in [`cicd/`](cicd/), here is the list:
