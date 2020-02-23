@@ -10,7 +10,7 @@ jobs:
             git clone --depth 1 https://github.com/simonkowallik/as3ninja $HOME/as3ninja
 
       - restore_cache:  # performance
-          key: v4-cicd-tooling-{{ checksum "~/as3ninja/as3ninja/__init__.py" }}
+          key: v5-cicd-tooling-{{ checksum "~/as3ninja/as3ninja/__init__.py" }}
 
       - run:
           name: Install AS3 Ninja
@@ -67,7 +67,7 @@ jobs:
 #            - ~/conftest
             - ~/project
             - ~/artifacts
-          key: v4-cicd-tooling-{{ checksum "~/as3ninja/as3ninja/__init__.py" }}
+          key: v5-cicd-tooling-{{ checksum "~/as3ninja/as3ninja/__init__.py" }}
 
   Lab10X:
     docker:
@@ -92,7 +92,7 @@ jobs:
             cicd/skip_ci_when_unchanged.sh Lab10X
 
       - restore_cache:  # activate cached cicd tooling
-          key: v4-cicd-tooling
+          key: v5-cicd-tooling
 
       - run:
           name: Setup Vault DEV/DEMO instance
@@ -171,7 +171,7 @@ jobs:
     steps:
       # restore previously cached data from cicd-tooling and each CI Lab pipeline
       - restore_cache:
-          key: v4-cicd-tooling
+          key: v5-cicd-tooling
       - restore_cache:
           key: v1-Lab10X-{{ .Revision }}
 
