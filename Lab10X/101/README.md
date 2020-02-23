@@ -2,6 +2,7 @@
 
 The AS3 API uses JSON as the data format. It is important to realize that is is *just* a data format, which means we can express the AS3 Declaration in other data formats as well, such as YAML!
 
+
 ### AS3 Declaration as YAML
 
 There is a lot of back and forth which format is better/best but it's not the focus of this lab to discuss all these. One advantage of YAML is that changes usually only affect the lines the data is hold in, which makes it easier to to read when reviewing changes (diffs). In contrast changes within JSON usually affect multiple lines, due to the need to append a comma `,` for separation of entries.
