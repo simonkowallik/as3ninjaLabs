@@ -29,6 +29,7 @@ declaration:
           serverAddresses:
           - 192.0.2.12
           - 192.0.2.13
+          - 192.0.2.14
       webtls:
         class: TLS_Server
         certificates:
