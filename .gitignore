@@ -1,3 +1,7 @@
 .vscode
 **/*.DS_Store
-__*
+__GetReady
+__Lab4
+__tmp
+**/__pycache__
+Pipfile*

@@ -1,0 +1,57 @@
+# Anchor the SampleTenant configuration
+SampleTenant: &SampleTenant
+  class: Tenant
+  App1:
+    class: Application
+    template: https
+    serviceMain:
+      class: Service_HTTPS
+      virtualAddresses:
+      - 198.18.2.11
+      pool: web_pool
+      serverTLS: webtls
+    web_pool:
+      class: Pool
+      monitors:
+      - http
+      members:
+      - servicePort: 80
+        serverAddresses:
+        - 192.0.2.12
+        - 192.0.2.13
+    webtls:
+      class: TLS_Server
+      certificates:
+      - certificate: webcert
+    webcert:
+      class: Certificate
+      remark: self-signed RSA certificate
+      # merge content of secrets_SampleTenant_App1 anchor (defined in secrets.yaml)
+      <<: *secrets_SampleTenant_App1
+  App2:
+    class: Application
+    template: https
+    serviceMain:
+      class: Service_HTTPS
+      virtualAddresses:
+      - 198.18.2.21
+      pool: web_pool
+      serverTLS: webtls
+    web_pool:
+      class: Pool
+      monitors:
+      - http
+      members:
+      - servicePort: 80
+        serverAddresses:
+        - 192.0.2.22
+        - 192.0.2.23
+    webtls:
+      class: TLS_Server
+      certificates:
+      - certificate: webcert
+    webcert:
+      class: Certificate
+      remark: self-signed RSA certificate
+      # merge content of secrets_SampleTenant_App2 anchor (defined in secrets.yaml)
+      <<: *secrets_SampleTenant_App2

@@ -1,0 +1,15 @@
+# main definition which refers to Tenants using YAML anchors
+as3declaration:
+  class: AS3
+  action: deploy
+  persist: true
+  declaration:
+    class: ADC
+    schemaVersion: 3.12.0
+    id: 123abc
+    label: Sample 02
+    remark: Slightly modified HTTPS sample declaration from the docs
+    # Instead of including the Tenant configurations explicitly
+    # just refer to their anchors (defined in the tenant's yaml files)
+    SampleTenant: *SampleTenant
+    AnotherTenant: *AnotherTenant

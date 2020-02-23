@@ -1,0 +1,30 @@
+# Anchor the AnotherTenant configuration
+AnotherTenant: &AnotherTenant
+  class: Tenant
+  AnotherApp1:
+    class: Application
+    template: https
+    serviceMain:
+      class: Service_HTTPS
+      virtualAddresses:
+      - 198.18.2.111
+      pool: web_pool
+      serverTLS: webtls
+    web_pool:
+      class: Pool
+      monitors:
+      - http
+      members:
+      - servicePort: 80
+        serverAddresses:
+        - 192.0.2.112
+        - 192.0.2.113
+    webtls:
+      class: TLS_Server
+      certificates:
+      - certificate: webcert
+    webcert:
+      class: Certificate
+      remark: self-signed RSA certificate
+      # merge content of secrets_AnotherTenant_AnotherApp1 anchor (defined in secrets.yaml)
+      <<: *secrets_AnotherTenant_AnotherApp1

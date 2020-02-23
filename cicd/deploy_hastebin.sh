@@ -13,6 +13,7 @@ AS3DeclarationFile=$1
 
 # send AS3 Declaration artifact to AS3 Ninja API
 response=$(cat $AS3DeclarationFile \
+          | jq -c . \
           | curl -s https://hastebin.com/documents \
                  -HContent-Type:application/json \
                  -XPOST \

@@ -1,0 +1,56 @@
+# Anchor the AnotherTenant configuration
+AnotherTenant: &AnotherTenant
+  class: Tenant
+  AnotherApp1:
+    class: Application
+    template: https
+    serviceMain:
+      class: Service_HTTPS
+      virtualAddresses:
+      - 198.18.2.111
+      pool: web_pool
+      serverTLS: webtls
+    web_pool:
+      class: Pool
+      monitors:
+      - http
+      members:
+      - servicePort: 80
+        serverAddresses:
+        - 192.0.2.112
+        - 192.0.2.113
+    webtls:
+      class: TLS_Server
+      certificates:
+      - certificate: webcert
+    webcert:
+      class: Certificate
+      remark: self-signed RSA certificate fetched from HashiCorp vault by as3ninja
+      # instead of using YAML merge we use as3ninja to fetch the secret from HashiCorp vault
+      #
+      # as3ninja will load the composed yaml as a "configuration" and store it in
+      # it's 'ninja.' namespace.
+      #
+      # therefore the secrets defined in secrets.yaml are accessible by their keys
+      # "ninja.secrets.AnotherTenant.AnotherApp1.certificate" therefore refers to the
+      # content of secrets.yaml:      \
+      # secrets:                       \
+      #   AnotherTenant:                \
+      #     AnotherApp1:                 \
+      #       certificate:                \
+      #         <content>                  \
+      #                  ___________________|___________________________
+      #                 /                                               \
+      #                v                                                 v
+      certificate: "{{ ninja.secrets.AnotherTenant.AnotherApp1.certificate | vault | jsonify(quote=False) }}"
+      #                                                                     ,^
+      #                                                                    /
+      # piping the content for each secret definition to '| vault' will instruct as3ninja to
+      # fetch the secret from Hashicorp Vault. The details what to fetch are defined in the
+      # variable which got "piped" to '| vault'
+      #
+      privateKey: "{{ ninja.secrets.AnotherTenant.AnotherApp1.privateKey | vault | jsonify(quote=False) }}"
+      #                                                                            ,^
+      #                                                                           /
+      # piping to '| jsonify(quote=False)' makes sure the secrets fit into a JSON string and avoids
+      # setting outer quotes as these are in place already!

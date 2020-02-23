@@ -1,0 +1,16 @@
+{# AS3 Ninja Declaration Template
+ #
+ # The below jinja2 statement reads the 'as3declaration' key for the
+ # as3ninja variable namespace ('ninja').
+ # This variable namespace is actually a python 'dict' data structure.
+ #
+ # It then "pipes" it to jsonify, which renders the data structure to a JSON object.
+ #
+ # In the last step the JSON object is passed to 'ninjutsu',
+ # a sepcial AS3 Ninja jinja2 filter.
+ # This filter will again interpret jinja2, which allows us to 'execute' the
+ # jinja2 statements within the SampleTenant.yaml and AnotherTenant.yaml
+ # to fetch the certificate + private key from vault.
+ #
+-#}
+{{ ninja.as3declaration | jsonify | ninjutsu }}

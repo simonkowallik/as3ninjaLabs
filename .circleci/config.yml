@@ -1,110 +1,75 @@
 version: 2.1
 jobs:
-  ci-setup:
+  cicd-tooling:
     docker:
       - image: circleci/python:3.8
     steps:
-      # git clone repository
-      - checkout
-
       - run:
           name: Clone latest AS3 Ninja
           command: |
-            git clone https://github.com/simonkowallik/as3ninja $HOME/as3ninja
+            git clone --depth 1 https://github.com/simonkowallik/as3ninja $HOME/as3ninja
+
+      - restore_cache:  # performance
+          key: v4-cicd-tooling-{{ checksum "~/as3ninja/as3ninja/__init__.py" }}
 
       - run:
           name: Install AS3 Ninja
           command: |
-            pip3 install pipenv
-            cd $HOME/as3ninja
-            pipenv install
-            cp $(pipenv --venv)/bin/activate $HOME/activate-virtualenv
+            pip3 install as3ninja
 
       - run:
-          name: Install conftest
+          name: Install yamllint
           command: |
-            pip3 install pipenv
-            mkdir -p $HOME/conftest
-            cd $HOME/conftest
-            curl -Lo - https://github.com/instrumenta/conftest/releases/download/v0.15.0/conftest_0.15.0_Linux_x86_64.tar.gz | tar xzf -
-            chmod +x conftest
+            pip3 install yamllint
 
       - run:
+          name: "Install pytest and test dependencies"
+          command: |
+            pip3 install \
+              boltons \
+              pytest \
+              pyyaml \
+              ;
+
+#      - run:
+#          name: Install prettier
+#          command: |
+#            sudo apt install npm
+#            npm install prettier
+
+      - run:
+          name: Install detect-secrets
+          command: |
+            pip3 install detect-secrets
+
+#      - run:
+#          name: Install conftest
+#          command: |
+#            mkdir -p ~/conftest
+#            cd ~/conftest
+#            test -f ./conftest || curl -Lo - https://github.com/instrumenta/conftest/releases/download/v0.17.0/conftest_0.17.0_Linux_x86_64.tar.gz | tar xzf -
+#            chmod +x conftest
+
+      - run:  # create a directory to store artifacts
           name: create Artifact Store
           command: |
-            cicd/create_artifact_store.sh $HOME/artifacts
+            mkdir -p ~/artifacts
 
       - run:
           name: AS3 Ninja Version check
           command: |
-            source $HOME/activate-virtualenv
             as3ninja --version
 
       - save_cache:
           paths:
             - ~/.local
             - ~/as3ninja
-            - ~/conftest
+#            - ~/conftest
             - ~/project
             - ~/artifacts
-            - ~/activate-virtualenv
-          key: v1-ci-setup-{{ .Revision }}
+          key: v4-cicd-tooling-{{ checksum "~/as3ninja/as3ninja/__init__.py" }}
 
-  Lab1:
-    docker:
-      - image: circleci/python:3.8
-      - image: docker.io/simonkowallik/as3ninja
-
-    environment:
-      # AS3 Declaration "Artifact" location
-      ARTIFACT: /home/circleci/artifacts/Lab1/AS3Declaration.json
-
-    steps:
-      - restore_cache:
-          key: v1-ci-setup
-
-      - run:
-          name: Skip CI?
-          command: |
-            # check for changes to this specific Lab, otherwise skip CI tests
-            cicd/check_if_lab_changed.sh
-
-      - run:
-          name: Build AS3 Declaration
-          command: |
-            source $HOME/activate-virtualenv
-            # Build AS3 Declaration using Template Configuration
-            # The location of the Declaration Template must be defined in the Template Configuration
-            as3ninja transform \
-              --no-validate \
-              --configuration-file Lab1/ninja.yaml \
-              --declaration-template Lab1/template.jinja2 \
-              --output-file $ARTIFACT
-
-      - run:
-          name: Display AS3 Declaration
-          command: |
-            # print out the AS3 Declaration for debugging
-            cat $ARTIFACT | jq .
-
-      - run:
-          name: Validate AS3 Declaration against AS3 Schema
-          command: |
-            # run AS3 Schema validation test against AS3 Declaration
-            tests/AS3Schema_validation.sh $ARTIFACT
-
-      - store_artifacts:
-          name: Store AS3 Declaration Artifact
-          path: ~/artifacts
-          destination: artifacts
-
-      - save_cache:
-          paths:
-            - ~/artifacts
-          key: v1-lab1-{{ .Revision }}
-
-
-  Lab2:
+  Lab10X:
     docker:
       - image: circleci/python:3.8
       - image: docker.io/simonkowallik/as3ninja
@@ -114,150 +79,108 @@ jobs:
           VAULT_DEV_ROOT_TOKEN_ID: YmFzZTY0LCBob29yYXkgOi0p
 
     environment:
-      # AS3 Declaration "Artifact" location
-      ARTIFACT: /home/circleci/artifacts/Lab2/AS3Declaration.json
       # Vault token and address
       VAULT_TOKEN: YmFzZTY0LCBob29yYXkgOi0p
       VAULT_ADDR: http://127.0.0.1:8200
 
     steps:
-      - restore_cache:
-          key: v1-ci-setup
+      - checkout  # clone as3ninjaLabs git repo
 
-      - run:
-          name: Skip CI?
+      - run:  # check git details for changes to this specific Lab, otherwise skip CI tests
+          name: Check for changes to Lab10X, otherwise skip CI
           command: |
-            # check for changes to this specific Lab, otherwise skip CI tests
-            cicd/check_if_lab_changed.sh
+            cicd/skip_ci_when_unchanged.sh Lab10X
+
+      - restore_cache:  # activate cached cicd tooling
+          key: v4-cicd-tooling
 
       - run:
-          name: Setup Vault DEV instance
+          name: Setup Vault DEV/DEMO instance
           command: |
             # activate python virtual environment, then setup vault
-            source $HOME/activate-virtualenv
-            cicd/vault_create_secrets.sh
-            cicd/vault_setup.py | jq .
+            cicd/labsetup/vault_create_secrets.sh
+            cicd/labsetup/vault_setup.py | jq .
 
       - run:
-          name: Build AS3 Declaration
+          name: "CI Security: Detect violations to secrets baseline"
           command: |
-            source $HOME/activate-virtualenv
-            # Build AS3 Declaration using Declaration Template and Template Configuration
-            Lab2/build_declaration.sh
+            # CI pipeline will fail when violations to the secrets baseline are found
+            cicd/security/secrets/detect.sh
 
       - run:
-          name: Display AS3 Declaration
+          name: "CI Validation: Validate all YAML files for proper formatting"
           command: |
-            # print out the AS3 Declaration for debugging
-            cat $ARTIFACT | jq .
+            # CI pipeline will fail on errors but continue on warnings
+            yamllint Lab10X/**/*.yaml
 
       - run:
-          name: Validate AS3 Declaration against AS3 Schema
+          name: "CI Test: Run Lab 101 tests"
+          command: |
+            tests/Lab101/test.sh
+
+      - run:
+          name: "CI Test: Security, Configuration Practice tests for Lab 104"
+          command: |
+            # Lab104: Security tests
+            pytest -vs tests/Lab104/test_configuration_security.py
+
+            # Lab104: Check required practices / configurations
+            pytest -vs tests/Lab104/test_configuration_practices.py
+
+      - run:
+          name: Build AS3 Declaration artifacts
+          command: |
+            # Lab 101: Build AS3 Declaration artifact by converting YAML to JSON
+            cicd/yaml2json -f Lab10X/101/AS3Declaration.yaml | jq . > ~/artifacts/101_AS3Declaration.json
+
+            # Lab 102: Build AS3 Declaration artifact by converting YAML to JSON
+            cicd/yaml2json -f Lab10X/102/AS3Declaration.yaml | jq . > ~/artifacts/102_AS3Declaration.json
+
+            # Lab 103: Use Makefile to build artifact
+            make -C Lab10X/103/ artifact
+
+            # Lab 104: Use Makefile to build artifact
+            make -C Lab10X/104/ artifact
+
+      - run:
+          name: "CI Test: Validate AS3 Declarations comply to AS3 Schema"
           command: |
             # run AS3 Schema validation test against AS3 Declaration
-            tests/AS3Schema_validation.sh $ARTIFACT
+
+            for ARTIFACT in $(find ~/artifacts -type f -name *AS3Declaration.json)
+            do
+              echo -e "\n\n* validating: $ARTIFACT"
+              cicd/AS3Schema_validation.sh $ARTIFACT
+            done
 
       - store_artifacts:
-          name: Store AS3 Declaration Artifact
+          name: Store AS3 Declaration Artifact for later deployment
           path: ~/artifacts
           destination: artifacts
 
       - save_cache:
           paths:
-            - ~/artifacts
-          key: v1-lab3-{{ .Revision }}
-
-
-  Lab3:
-    docker:
-      - image: circleci/python:3.8
-      - image: docker.io/simonkowallik/as3ninja
-      - image: docker.io/vault
-        environment:
-          SKIP_SETCAP: skip
-          VAULT_DEV_ROOT_TOKEN_ID: YmFzZTY0LCBob29yYXkgOi0p
-
-    environment:
-      # AS3 Declaration "Artifact" location
-      ARTIFACT: /home/circleci/artifacts/Lab3/AS3Declaration.json
-      # Vault token and address
-      VAULT_TOKEN: YmFzZTY0LCBob29yYXkgOi0p
-      VAULT_ADDR: http://127.0.0.1:8200
-
-    steps:
-      - restore_cache:
-          key: v1-ci-setup
-
-      - run:
-          name: Skip CI?
-          command: |
-            # check for changes to this specific Lab, otherwise skip CI tests
-            cicd/check_if_lab_changed.sh
-
-      - run:
-          name: Setup Vault DEV instance
-          command: |
-            # activate python virtual environment, then setup vault
-            source $HOME/activate-virtualenv
-            cicd/vault_create_secrets.sh
-            cicd/vault_setup.py | jq .
-
-      - run:
-          name: Test Configuration
-          command: |
-            # Run conftest against ninja.yaml
-            ~/conftest/conftest test -p Lab3/policy Lab3/ninja.yaml
-
-      - run:
-          name: Build AS3 Declaration
-          command: |
-            source $HOME/activate-virtualenv
-            # Build AS3 Declaration using Declaration Template and Template Configuration
-            Lab3/build_declaration.sh
-
-      - run:
-          name: Display AS3 Declaration
-          command: |
-            # print out the AS3 Declaration for debugging
-            cat $ARTIFACT | jq .
-
-      - run:
-          name: Validate AS3 Declaration against AS3 Schema
-          command: |
-            # run AS3 Schema validation test against AS3 Declaration
-            tests/AS3Schema_validation.sh $ARTIFACT
-
-      - store_artifacts:
-          name: Store AS3 Declaration Artifact
-          path: ~/artifacts
-          destination: artifacts
-
-      - save_cache:
-          paths:
-            - ~/artifacts
-          key: v1-lab3-{{ .Revision }}
-
+            - ~/artifacts  # save artifacts for CD
+            - ~/project  # save current project, avoids another git checkout
+          key: v1-Lab10X-{{ .Revision }}
 
   ContinuousDelivery:
     docker:
       - image: circleci/python:3.8
 
     steps:
-      # restore previously cached data from ci-setup and each CI Lab pipeline
+      # restore previously cached data from cicd-tooling and each CI Lab pipeline
       - restore_cache:
-          key: v1-ci-setup
+          key: v4-cicd-tooling
       - restore_cache:
-          key: v1-lab1-{{ .Revision }}
-      - restore_cache:
-          key: v1-lab2-{{ .Revision }}
-      - restore_cache:
-          key: v1-lab3-{{ .Revision }}
-      # CD: deploy every artifact
-      - run:
+          key: v1-Lab10X-{{ .Revision }}
+
+      - run:  # CD/Continuous Delivery: deploy every artifact
           name: Deploy AS3 Declaration to Hastebin
           command: |
             # Hastebin can't do much with a Declaration but it serves the purpose to demo CD
-            for artifact in $(ls ~/artifacts/*/AS3Declaration.json)
+
+            for artifact in $(find ~/artifacts -type f -name *AS3Declaration.json)
             do
               cicd/deploy_hastebin.sh $artifact
             done
@@ -266,21 +189,13 @@ workflows:
   version: 2
   "AS3 Ninja CI+CD Labs":
     jobs:
-    # 1. Setup CI environment
-    - ci-setup
-    # 2. Run CI for all Labs
-    - Lab1:
-        requires:
-          - ci-setup
-    - Lab2:
-        requires:
-          - ci-setup
-    - Lab3:
-        requires:
-          - ci-setup
-    # 3. Deploy (requires CI for all Labs to succeed)
-    - ContinuousDelivery:
-        requires:
-          - Lab1
-          - Lab2
-          - Lab3
+      # 1. Setup CI environment
+      - cicd-tooling
+      # 2. Run CI for all Labs
+      - Lab10X:
+          requires:
+            - cicd-tooling
+      # 3. Deploy (requires CI for all Labs to succeed)
+      - ContinuousDelivery:
+          requires:
+            - Lab10X
